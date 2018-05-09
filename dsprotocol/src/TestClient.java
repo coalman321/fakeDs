@@ -4,16 +4,21 @@ public class TestClient {
 
     public static void main(String[] args) throws Exception{
         ConOutMain.createConsole(true);
-        DSUDPToRIO connection = new DSUDPToRIO();
+        RioCommProtocol protocol = new RioCommProtocol();
+        protocol.startCommunication();
         while (true){
             String text = ConOutMain.getRef().textOut();
-            Thread.sleep(100);
-            if(text.equalsIgnoreCase("stop") && (connection != null)){
-                connection.close();
+            if(text.equalsIgnoreCase("enable")){
+                protocol.setControlMode(RioCommProtocol.RobotState.TELEOPENABLED);
             }
-            if(text.equalsIgnoreCase("start")){
-                connection = new DSUDPToRIO(ToRIOPacket.AllianceNum.RED1);
-                connection.startComms();
+            else if(text.equalsIgnoreCase("disable")){
+                protocol.setControlMode(RioCommProtocol.RobotState.TELEOPDISABLED);
+            }
+            else if(text.equalsIgnoreCase("reset")){
+                protocol.request(false, true);
+            }
+            else if(text.equalsIgnoreCase("restart")){
+                protocol.request(true, false);
             }
         }
     }

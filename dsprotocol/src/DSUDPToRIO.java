@@ -41,9 +41,18 @@ public class DSUDPToRIO {
     }
 
     public DSUDPToRIO(ToRIOPacket.AllianceNum alliance){
-        sending = new ToRIOPacket(false, true, ToRIOPacket.ControlMode.TELEOP, alliance);
+        System.out.println("Initializing to RIO UDP connection");
+        sending = new ToRIOPacket(false, false, ToRIOPacket.ControlMode.TELEOP, alliance);
         thread = new Thread(run);
         thread.setDaemon(true);
+    }
+
+    public void setPacket(ToRIOPacket packet){
+        sending = packet;
+    }
+
+    public ToRIOPacket getPacket(){
+        return sending;
     }
 
     public void startComms(){

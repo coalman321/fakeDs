@@ -29,7 +29,7 @@ public class ToRIOPacket {
         }
     }
 
-    public class ControlByte {
+    public static class ControlByte {
 
         private byte data;
 
@@ -45,7 +45,7 @@ public class ToRIOPacket {
         }
     }
 
-    public class RequestByte {
+    public static class RequestByte {
 
         private byte data;
 
@@ -60,10 +60,14 @@ public class ToRIOPacket {
     }
 
     private char counter = 0;
+    private int countAtRequest = -1, numRequests = 10;
     private ControlByte control;
     private RequestByte request;
     private AllianceNum alliance;
-    private ToRIOPacket lastPacket;
+    private static RequestByte defaultRequest;
+    static{
+        defaultRequest = new RequestByte(false, false);
+    }
 
     public ToRIOPacket(AllianceNum alliance){
         this(false, false, false, ControlMode.TELEOP, false, false, alliance);
@@ -77,12 +81,17 @@ public class ToRIOPacket {
         control = new ControlByte(isEstop, isFMS, isEnabled, mode);
         request = new RequestByte(restart, reset);
         this.alliance = alliance;
-        lastPacket = this;
     }
 
     public byte[] getPacket(){
         counter++;
-        return new byte[]{getCounterMSB(), getCounterLSB(), 0x01, control.data, request.data,alliance.id };
+        if(countAtRequest != -1 && (counter - countAtRequest) < numRequests){
+            return new byte[]{getCounterMSB(), getCounterLSB(), 0x01, control.data, request.data, alliance.id};
+        }
+        else {
+            countAtRequest = -1;
+            return new byte[]{getCounterMSB(), getCounterLSB(), 0x01, control.data, defaultRequest.data, alliance.id};
+        }
     }
 
     public void setControl(boolean isEstop, boolean isFMS, boolean isEnabled, ControlMode mode){
@@ -90,6 +99,9 @@ public class ToRIOPacket {
     }
 
     public void setRequest(boolean restart, boolean reset){
+        if(reset || restart){
+            countAtRequest = counter;
+        }
         request = new RequestByte(restart, reset);
     }
 
