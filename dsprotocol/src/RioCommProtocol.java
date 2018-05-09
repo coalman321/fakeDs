@@ -1,5 +1,8 @@
 import sun.dc.pr.PRError;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class RioCommProtocol {
 
     public enum RobotState{
@@ -24,13 +27,23 @@ public class RioCommProtocol {
     DSUDPFromRIO fromRIO;
 
     public RioCommProtocol(){
-        System.out.println("beginning RIO comms connection");
-        toRIO = new DSUDPToRIO();
-        fromRIO = new DSUDPFromRIO();
+        try {
+            InetAddress address = InetAddress.getByName("roborio-7303-frc.local");
+            System.out.println("Rio found at: " + address.getHostAddress());
+            System.out.println("beginning RIO comms connection");
+            toRIO = new DSUDPToRIO(address);
+            fromRIO = new DSUDPFromRIO(address);
+        } catch (UnknownHostException e) {
+            System.out.println("system Error: could not find RIO with hostname '" + e.getMessage() + "'");
+            //e.printStackTrace();
+        }
     }
 
     public void startCommunication(){
-        toRIO.startComms();
+        if(toRIO != null && fromRIO != null){
+            toRIO.startComms();
+            fromRIO.startComms();
+        }
     }
 
     public void setControlMode(RobotState state){

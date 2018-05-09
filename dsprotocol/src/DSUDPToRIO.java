@@ -10,25 +10,23 @@ public class DSUDPToRIO {
     private ToRIOPacket sending;
     protected byte[] toSend;
     private DatagramSocket sock;
-    private InetAddress addr;
+    private InetAddress address;
     private Thread thread;
 
     private Runnable run = () ->{
         try {
             System.out.println("thread started");
             sock = new DatagramSocket();
-            addr = InetAddress.getByName("roborio-7303-frc.local");
-            System.out.println("Rio found at: " + addr.getHostAddress());
             while (!shouldKill) {
                 toSend = sending.getPacket();
-                DatagramPacket toRio = new DatagramPacket(toSend, toSend.length, addr, udpPort);
+                DatagramPacket toRio = new DatagramPacket(toSend, toSend.length, address, udpPort);
                 sock.send(toRio);
 
                 Thread.sleep(18);
             }
         }
         catch (Exception e){
-            System.out.println("system Error : could not find or connect to RIO");
+            System.out.println("system Error : could not connect to RIO");
             System.out.println(e.getMessage());
             e.printStackTrace();
             close();
@@ -36,12 +34,13 @@ public class DSUDPToRIO {
     };
 
 
-    public DSUDPToRIO(){
-        this(ToRIOPacket.AllianceNum.RED1);
+    public DSUDPToRIO(InetAddress address){
+        this(ToRIOPacket.AllianceNum.RED1, address);
     }
 
-    public DSUDPToRIO(ToRIOPacket.AllianceNum alliance){
+    public DSUDPToRIO(ToRIOPacket.AllianceNum alliance, InetAddress address){
         System.out.println("Initializing to RIO UDP connection");
+        this.address = address;
         sending = new ToRIOPacket(false, false, ToRIOPacket.ControlMode.TELEOP, alliance);
         thread = new Thread(run);
         thread.setDaemon(true);
@@ -69,7 +68,7 @@ public class DSUDPToRIO {
     }
 
     public InetAddress getAddress(){
-        return addr;
+        return address;
     }
 
 
