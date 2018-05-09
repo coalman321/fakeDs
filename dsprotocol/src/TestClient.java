@@ -29,6 +29,10 @@ public class TestClient {
             else if(text.equalsIgnoreCase("restart")){
                 protocol.request(true, false);
             }
+            else if(text.equalsIgnoreCase("close")){
+                protocol.close();
+                System.exit(1);
+            }
         }
     }
 

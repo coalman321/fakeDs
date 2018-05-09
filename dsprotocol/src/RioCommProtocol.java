@@ -28,6 +28,13 @@ public class RioCommProtocol {
         }
     }
 
+    public void close(){
+        if(toRIO != null && fromRIO != null){
+            toRIO.close();
+            fromRIO.close();
+        }
+    }
+
     public void setControlMode(ToRIOPacket.ControlMode mode){
         this.setControlMode(false, mode);
     }

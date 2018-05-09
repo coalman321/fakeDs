@@ -10,4 +10,8 @@ public class DSUDPFromRIO {
 
     }
 
+    public void close(){
+
+    }
+
 }
