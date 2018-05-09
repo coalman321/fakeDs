@@ -2,30 +2,43 @@ public class ToRIOPacket {
 
 
     enum ControlMode{
-        AUTO(2),
-        TEST(1),
-        TELEOP(0);
+        AUTO(2, "Autonomous"),
+        TEST(1, "Test"),
+        TELEOP(0, "Teleoperated");
 
         private byte id;
+        private String name;
 
-        ControlMode(int idNo){
+        ControlMode(int idNo, String name){
             id = (byte)idNo;
+            this.name = name;
         }
 
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     enum AllianceNum{
-        RED1(0),
-        RED2(1),
-        RED3(2),
-        BLUE1(3),
-        BLUE2(4),
-        BLUE3(5);
+        RED1(0, "Red 1"),
+        RED2(1, "Red 2"),
+        RED3(2, "Red 3"),
+        BLUE1(3, "Blue 1"),
+        BLUE2(4, "Blue 2"),
+        BLUE3(5, "Blue 3");
 
         private byte id;
+        private String name;
 
-        AllianceNum(int num){
+        AllianceNum(int num, String name){
             id = (byte)num;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 

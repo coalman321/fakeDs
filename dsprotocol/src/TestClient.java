@@ -2,7 +2,7 @@ import com.org.ConsoleLibs.ConOutMain;
 
 public class TestClient {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args){
         ConOutMain.createConsole(true);
         RioCommProtocol protocol = new RioCommProtocol();
         protocol.startCommunication();
@@ -30,7 +30,13 @@ public class TestClient {
                 protocol.request(true, false);
             }
             else if(text.equalsIgnoreCase("close")){
+                System.out.println("closing connection");
                 protocol.close();
+                try{
+                    Thread.sleep(1000);
+                }catch (Exception e){
+
+                }
                 System.exit(1);
             }
         }
