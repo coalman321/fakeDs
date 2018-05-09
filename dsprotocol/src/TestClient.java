@@ -9,10 +9,19 @@ public class TestClient {
         while (true){
             String text = ConOutMain.getRef().textOut();
             if(text.equalsIgnoreCase("enable")){
-                protocol.setControlMode(RioCommProtocol.RobotState.TELEOPENABLED);
+                protocol.enable(true);
             }
             else if(text.equalsIgnoreCase("disable")){
-                protocol.setControlMode(RioCommProtocol.RobotState.TELEOPDISABLED);
+                protocol.enable(false);
+            }
+            else if(text.equalsIgnoreCase("teleop")){
+                protocol.setControlMode(ToRIOPacket.ControlMode.TELEOP);
+            }
+            else if(text.equalsIgnoreCase("auto")){
+                protocol.setControlMode(ToRIOPacket.ControlMode.AUTO);
+            }
+            else if(text.equalsIgnoreCase("test")){
+                protocol.setControlMode(ToRIOPacket.ControlMode.TEST);
             }
             else if(text.equalsIgnoreCase("reset")){
                 protocol.request(false, true);

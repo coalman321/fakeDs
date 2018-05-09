@@ -1,30 +1,12 @@
-import sun.dc.pr.PRError;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class RioCommProtocol {
 
-    public enum RobotState{
-        AUTOENABLED(true, ToRIOPacket.ControlMode.AUTO),
-        AUTODISABLED(false, ToRIOPacket.ControlMode.AUTO),
-        TESTENABLED(true, ToRIOPacket.ControlMode.TEST),
-        TESTDISABLED(false, ToRIOPacket.ControlMode.TEST),
-        TELEOPENABLED(true, ToRIOPacket.ControlMode.TELEOP),
-        TELEOPDISABLED(false, ToRIOPacket.ControlMode.TELEOP);
-
-        private boolean isEnabled;
-        private ToRIOPacket.ControlMode mode;
-
-        RobotState(boolean isEnabled, ToRIOPacket.ControlMode mode){
-            this.isEnabled = isEnabled;
-            this.mode = mode;
-        }
-
-    }
-
     DSUDPToRIO toRIO;
     DSUDPFromRIO fromRIO;
+    ToRIOPacket.ControlMode robotMode = ToRIOPacket.ControlMode.TELEOP;
 
     public RioCommProtocol(){
         try {
@@ -46,10 +28,19 @@ public class RioCommProtocol {
         }
     }
 
-    public void setControlMode(RobotState state){
+    public void setControlMode(ToRIOPacket.ControlMode mode){
+        this.setControlMode(false, mode);
+    }
+
+    public void setControlMode(boolean isEnabled, ToRIOPacket.ControlMode mode){
+        robotMode = mode;
         ToRIOPacket packet = toRIO.getPacket();
-        packet.setControl(false, false, state.isEnabled, state.mode);
+        packet.setControl(false, false, isEnabled, mode);
         toRIO.setPacket(packet);
+    }
+
+    public void enable(boolean enable){
+        setControlMode(enable, robotMode);
     }
 
     public void request(boolean shouldRestart, boolean shouldReset){
