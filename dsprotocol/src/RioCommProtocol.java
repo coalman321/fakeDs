@@ -8,12 +8,13 @@ public class RioCommProtocol {
     DSUDPFromRIO fromRIO;
     ToRIOPacket.ControlMode robotMode = ToRIOPacket.ControlMode.TELEOP;
 
-    public RioCommProtocol(){
+    public RioCommProtocol(int teamNum){
         try {
             InetAddress local = InetAddress.getLocalHost();
             System.out.println("Localhost found at: " + local.getHostAddress());
             fromRIO = new DSUDPFromRIO();
-            InetAddress rioAddress = InetAddress.getByName("roborio-7303-frc.local");
+            InetAddress rioAddress = InetAddress.getByName("roborio-" + teamNum + "-frc.local");
+            //InetAddress rioAddress = InetAddress.getByName("10.41.45.2");
             System.out.println("Rio found at: " + rioAddress.getHostAddress());
             toRIO = new DSUDPToRIO(rioAddress);
             System.out.println("Beginning RIO comms connection");

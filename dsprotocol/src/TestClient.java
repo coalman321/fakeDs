@@ -4,7 +4,7 @@ public class TestClient {
 
     public static void main(String[] args){
         ConOutMain.createConsole(true);
-        RioCommProtocol protocol = new RioCommProtocol();
+        RioCommProtocol protocol = new RioCommProtocol(7303);
         protocol.startCommunication();
         while (true){
             //System.out.println("last received packet");
@@ -39,7 +39,7 @@ public class TestClient {
                 }catch (Exception e){
 
                 }
-                //System.exit(1);
+                System.exit(1);
             }
         }
     }
