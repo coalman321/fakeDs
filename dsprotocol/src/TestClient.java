@@ -7,6 +7,8 @@ public class TestClient {
         RioCommProtocol protocol = new RioCommProtocol();
         protocol.startCommunication();
         while (true){
+            //System.out.println("last received packet");
+            //System.out.println(protocol.getLastPacket());
             String text = ConOutMain.getRef().textOut();
             if(text.equalsIgnoreCase("enable")){
                 protocol.enable(true);
@@ -30,14 +32,14 @@ public class TestClient {
                 protocol.request(true, false);
             }
             else if(text.equalsIgnoreCase("close")){
-                System.out.println("closing connection");
+                //System.out.println("closing connection");
                 protocol.close();
                 try{
                     Thread.sleep(1000);
                 }catch (Exception e){
 
                 }
-                System.exit(1);
+                //System.exit(1);
             }
         }
     }

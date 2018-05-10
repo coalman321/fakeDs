@@ -27,7 +27,7 @@ public class DSUDPToRIO {
         }
         catch (Exception e){
             System.out.println("system Error : could not connect to RIO");
-            System.out.println(e.getMessage());
+            System.out.println(e);
             e.printStackTrace();
             close();
         }

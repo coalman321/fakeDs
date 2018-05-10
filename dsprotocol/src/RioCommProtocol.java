@@ -10,15 +10,24 @@ public class RioCommProtocol {
 
     public RioCommProtocol(){
         try {
-            InetAddress address = InetAddress.getByName("roborio-7303-frc.local");
-            System.out.println("Rio found at: " + address.getHostAddress());
+            InetAddress local = InetAddress.getLocalHost();
+            System.out.println("Localhost found at: " + local.getHostAddress());
+            fromRIO = new DSUDPFromRIO();
+            InetAddress rioAddress = InetAddress.getByName("roborio-7303-frc.local");
+            System.out.println("Rio found at: " + rioAddress.getHostAddress());
+            toRIO = new DSUDPToRIO(rioAddress);
             System.out.println("Beginning RIO comms connection");
-            toRIO = new DSUDPToRIO(address);
-            fromRIO = new DSUDPFromRIO(address);
         } catch (UnknownHostException e) {
             System.out.println("System Error: could not find RIO with hostname '" + e.getMessage() + "'");
             //e.printStackTrace();
         }
+    }
+
+    public FromRIOPacket getLastPacket() {
+        if(fromRIO != null) {
+            return fromRIO.getPacket();
+        }
+        return new FromRIOPacket(64);
     }
 
     public void startCommunication(){
@@ -70,3 +79,4 @@ public class RioCommProtocol {
     }
 
 }
+
