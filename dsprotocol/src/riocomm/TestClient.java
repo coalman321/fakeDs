@@ -1,15 +1,16 @@
+package riocomm;
+
 import com.org.ConsoleLibs.ConOutMain;
+import specialconsole.ConWrapper;
 
 public class TestClient {
 
     public static void main(String[] args){
-        ConOutMain.createConsole(true);
+        ConWrapper.createConsole(true);
         RioCommProtocol protocol = new RioCommProtocol(7303);
         protocol.startCommunication();
         while (true){
-            //System.out.println("last received packet");
-            //System.out.println(protocol.getLastPacket());
-            String text = ConOutMain.getRef().textOut();
+            String text = ConWrapper.getRef().textOut();
             if(text.equalsIgnoreCase("enable")){
                 protocol.enable(true);
             }

@@ -1,3 +1,5 @@
+package riocomm;
+
 public class FromRIOPacket {
 
     byte[] stored;
@@ -8,6 +10,10 @@ public class FromRIOPacket {
 
     public FromRIOPacket(int len){
         stored = new byte[len];
+    }
+
+    public void setData(byte[] data){
+        stored = data;
     }
 
     int getCount(){

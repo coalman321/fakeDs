@@ -1,3 +1,5 @@
+package riocomm;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,7 +24,7 @@ public class DSUDPFromRIO {
                 DatagramPacket fromRio = new DatagramPacket(toSend, toSend.length);
                 sock.receive(fromRio);
 
-                packet = new FromRIOPacket(fromRio.getData());
+                packet.setData(fromRio.getData());
 
                 System.out.println(packet);
 
@@ -41,9 +43,6 @@ public class DSUDPFromRIO {
             e.printStackTrace();
             close();
         }
-        catch(NullPointerException e){
-            System.out.println("caught null pointer");
-        }
         catch (InterruptedException e){
             //ignore means nothing
         }
@@ -52,6 +51,7 @@ public class DSUDPFromRIO {
     public DSUDPFromRIO(){
         System.out.println("Initializing from RIO UDP connection");
         toSend = new byte[64];
+        packet = new FromRIOPacket(64);
         thread = new Thread(run);
         thread.setDaemon(true);
     }

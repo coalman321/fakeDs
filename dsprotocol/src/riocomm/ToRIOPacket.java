@@ -1,3 +1,5 @@
+package riocomm;
+
 public class ToRIOPacket {
 
 
