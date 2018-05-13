@@ -13,7 +13,9 @@ public class TestClient {
     static CustomDs ds;
 
     static Runnable run = () -> {
-        ds.setVoltage(protocol.getLastPacket().getVoltage());
+        while(true) {
+            ds.setVoltage(protocol.getLastPacket().getVoltage());
+        }
     };
 
 

@@ -73,7 +73,7 @@ public class CustomDs {
     }
 
     public void setVoltage(double voltage) {
-        voltageReadOut.setText(voltage + " v");
+        voltageReadOut.setText(String.format("%.3f", voltage) + " v");
     }
 
     public void setRobotMode(ToRIOPacket.ControlMode mode) {

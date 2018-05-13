@@ -26,7 +26,7 @@ public class DSUDPFromRIO {
 
                 packet.setData(fromRio.getData());
 
-                System.out.println(packet);
+                //System.out.println(packet);
 
                 Thread.sleep(18);
             }
