@@ -2,11 +2,6 @@ package riocomm;
 
 import specialconsole.CustomDs;
 
-import javax.swing.*;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 public class TestClient {
 
     static RioCommProtocol protocol;

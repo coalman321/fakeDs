@@ -14,14 +14,16 @@ public class RioCommProtocol {
             InetAddress local = InetAddress.getLocalHost();
             System.out.println("Localhost found at: " + local.getHostAddress());
             fromRIO = new DSUDPFromRIO();
-            InetAddress rioAddress = InetAddress.getByName("roborio-" + teamNum + "-frc.local");
-            //InetAddress rioAddress = InetAddress.getByName("10.41.45.2");
-            System.out.println("Rio found at: " + rioAddress.getHostAddress());
-            toRIO = new DSUDPToRIO(rioAddress);
+        }
+        catch (UnknownHostException e) {
+            System.out.println("Could not find Localhost");
+        }
+        try {
+            toRIO = new DSUDPToRIO(getAddress(teamNum, false));
             System.out.println("Beginning RIO comms connection");
-        } catch (UnknownHostException e) {
-            System.out.println("System Error: could not find RIO with hostname '" + e.getMessage() + "'");
-            //e.printStackTrace();
+        }
+        catch (UnknownHostException except){
+            System.out.println("System Error: could not find RIO");
         }
     }
 
@@ -72,6 +74,30 @@ public class RioCommProtocol {
 
     public ToRIOPacket.ControlMode getRobotMode() {
         return robotMode;
+    }
+
+    private InetAddress getAddress(int teamNum, boolean fixedIP) throws UnknownHostException{
+        InetAddress rioAddress = null;
+        try {
+            rioAddress = InetAddress.getByName("roborio-" + teamNum + "-frc.local");
+            System.out.println("Rio found at: " + rioAddress.getHostAddress());
+            return rioAddress;
+        } catch (UnknownHostException e) {
+            System.out.println("System Error: could not find RIO with hostname '" + e.getMessage() + "'");
+            //e.printStackTrace();
+            if(fixedIP) {
+                try {
+                    String num1 = ("." + teamNum).substring(0, 3) + ".";
+                    String num2 = (teamNum + "").substring(2) + ".";
+                    rioAddress = InetAddress.getByName("10" + num1 + num2 + "2");
+                    return rioAddress;
+                } catch (UnknownHostException except1) {
+                    System.out.println("System Error: could not find RIO with hostname '" + e.getMessage() + "'");
+                }
+            }
+        }
+        throw new UnknownHostException();
+        //return rioAddress;
     }
 }
 
