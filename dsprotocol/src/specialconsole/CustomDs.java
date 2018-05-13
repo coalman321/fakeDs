@@ -121,7 +121,7 @@ public class CustomDs {
 
     public double doubleOut() {
         try {
-            return Double.parseDouble(this.textOut());
+            return Double.parseDouble(textOut());
         } catch (NumberFormatException var2) {
             System.out.println("That was not a number! Try again!");
             this.doubleOut();
@@ -131,52 +131,44 @@ public class CustomDs {
 
     public int intOut() {
         try {
-            return Integer.parseInt(this.textOut());
+            return Integer.parseInt(textOut());
         } catch (NumberFormatException var2) {
             System.out.println("That was not a number! Try again!");
-            this.intOut();
+            intOut();
             return 0;
         }
     }
 
     public long longOut() {
         try {
-            return Long.parseLong(this.textOut());
+            return Long.parseLong(textOut());
         } catch (NumberFormatException var2) {
             System.out.println("That was not a number! Try again!");
-            this.longOut();
+            longOut();
             return 0L;
         }
     }
 
     public boolean boolOut() {
         try {
-            return Boolean.parseBoolean(this.textOut());
+            return Boolean.parseBoolean(textOut());
         } catch (NumberFormatException var2) {
             System.out.println("That was not a Boolean! Try again!");
-            this.boolOut();
+            boolOut();
             return false;
         }
     }
 
     public char charAt(int n) {
-        String in = this.textOut();
-        return in.charAt(n);
+        return textOut().charAt(n);
     }
 
     public boolean findInInput(String s) {
-        Scanner in = new Scanner(this.textOut());
-        if (s == in.findInLine(s)) {
-            in.close();
-            return true;
-        } else {
-            in.close();
-            return false;
-        }
+        return textOut().contains(s);
     }
 
     public int findLocationInInput(String S) {
-        return this.textOut().indexOf(S);
+        return textOut().indexOf(S);
     }
 
     /**

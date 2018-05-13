@@ -3,24 +3,33 @@ package riocomm;
 public class FromRIOPacket {
 
     byte[] stored;
+    int lastCount = 0, currentCount, dropped;
 
     public FromRIOPacket(byte[] recived){
-        stored = recived;
+        setData(recived);
     }
 
     public FromRIOPacket(int len){
-        stored = new byte[len];
+        setData(new byte[len]);
     }
 
     public void setData(byte[] data){
         stored = data;
+        currentCount = bytesToInt2(stored[1], stored[0]);
+        if(lastCount < currentCount - 1)
+            dropped++;
+        lastCount = currentCount;
     }
 
-    int getCount(){
-        return bytesToInt2(stored[1], stored[0]);
+    public int getCount(){
+        return currentCount;
     }
 
-    double getVoltage(){
+    public int getDropped(){
+        return dropped;
+    }
+
+    public double getVoltage(){
         return (bytesToInt2(stored[6], stored[5]) / 256.0);
     }
 

@@ -14,7 +14,6 @@ public class TestClient {
         ds.setRobotMode(ToRIOPacket.ControlMode.TELEOP, false);
         ds.getEnableButton().addActionListener(e -> enableButton());
         ds.getDisableButton().addActionListener(e -> disableButton());
-        ds.setPacketloss(10);
         Thread thread = new Thread(() -> telemetryLoop());
         thread.setDaemon(true);
         thread.start();
@@ -42,6 +41,7 @@ public class TestClient {
     public static void telemetryLoop(){
         while(true) {
             ds.setVoltage(protocol.getLastPacket().getVoltage());
+            ds.setPacketloss(protocol.getLastPacket().getDropped());
         }
     }
 
