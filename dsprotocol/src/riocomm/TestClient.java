@@ -12,13 +12,6 @@ public class TestClient {
     static RioCommProtocol protocol;
     static CustomDs ds;
 
-    static Runnable telemetryUpdateLoop = () -> {
-        while(true) {
-            ds.setVoltage(protocol.getLastPacket().getVoltage());
-        }
-    };
-
-
     public static void main(String[] args){
         ds = new CustomDs();
         protocol = new RioCommProtocol(7303);
@@ -27,9 +20,37 @@ public class TestClient {
         ds.getEnableButton().addActionListener(e -> enableButton());
         ds.getDisableButton().addActionListener(e -> disableButton());
         ds.setPacketloss(10);
-        Thread thread = new Thread(telemetryUpdateLoop);
+        Thread thread = new Thread(() -> telemetryLoop());
         thread.setDaemon(true);
         thread.start();
+        mainLoop();
+    }
+
+    public static void enableButton(){
+        try {
+            protocol.enable(true);
+            ds.setRobotMode(protocol.getRobotMode(), true);
+        }catch (NullPointerException exept){
+            System.out.println("Could not perform request!");
+        }
+    }
+
+    public static void disableButton(){
+        try {
+            protocol.enable(false);
+            ds.setRobotMode(protocol.getRobotMode(), false);
+        }catch (NullPointerException exept){
+            System.out.println("Could not perform request!");
+        }
+    }
+
+    public static void telemetryLoop(){
+        while(true) {
+            ds.setVoltage(protocol.getLastPacket().getVoltage());
+        }
+    }
+
+    public static void mainLoop(){
         while (true) {
             String text = ds.textOut();
             try {
@@ -60,24 +81,6 @@ public class TestClient {
             }catch (NullPointerException except){
                 System.out.println("Could not perform request!");
             }
-        }
-    }
-
-    public static void enableButton(){
-        try {
-            protocol.enable(true);
-            ds.setRobotMode(protocol.getRobotMode(), true);
-        }catch (NullPointerException exept){
-            System.out.println("Could not perform request!");
-        }
-    }
-
-    public static void disableButton(){
-        try {
-            protocol.enable(false);
-            ds.setRobotMode(protocol.getRobotMode(), false);
-        }catch (NullPointerException exept){
-            System.out.println("Could not perform request!");
         }
     }
 
