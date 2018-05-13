@@ -3,7 +3,7 @@ package riocomm;
 public class ToRIOPacket {
 
 
-    enum ControlMode{
+    public enum ControlMode{
         AUTO(2, "Autonomous"),
         TEST(1, "Test"),
         TELEOP(0, "Teleoperated");
@@ -22,7 +22,7 @@ public class ToRIOPacket {
         }
     }
 
-    enum AllianceNum{
+    public enum AllianceNum{
         RED1(0, "Red 1"),
         RED2(1, "Red 2"),
         RED3(2, "Red 3"),

@@ -66,8 +66,8 @@ public class SpecialConsole extends JFrame implements ActionListener {
 
         try {
             Thread.sleep(1L);
-        } catch (InterruptedException var3) {
-            ;
+        } catch (InterruptedException e) {
+
         }
 
     }
@@ -164,10 +164,6 @@ public class SpecialConsole extends JFrame implements ActionListener {
         return this.textOut().indexOf(S);
     }
 
-    public void windowClosing(WindowEvent e) {
-        this.frame.dispose();
-        System.exit(0);
-    }
 
     /** @deprecated */
     public void exit() {
