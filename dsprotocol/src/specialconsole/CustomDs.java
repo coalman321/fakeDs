@@ -188,7 +188,7 @@ public class CustomDs {
         consoleReadOut = new JTextArea();
         consoleReadOut.setEditable(false);
         consoleReadOut.setEnabled(true);
-        consolePanel.add(consoleReadOut, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(800, 400), new Dimension(800, 400), new Dimension(800, 400), 0, false));
+        consolePanel.add(consoleReadOut, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(800, 400), new Dimension(800, 400), null, 0, false));
         systemPanel = new JPanel();
         systemPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
         systemPanel.setEnabled(true);

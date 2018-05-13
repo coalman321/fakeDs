@@ -9,9 +9,17 @@ import java.awt.event.WindowEvent;
 
 public class TestClient {
 
+    static RioCommProtocol protocol;
+    static CustomDs ds;
+
+    static Runnable run = () -> {
+        ds.setVoltage(protocol.getLastPacket().getVoltage());
+    };
+
+
     public static void main(String[] args){
         JFrame frame = new JFrame("CustomDs");
-        CustomDs ds = new CustomDs();
+        ds = new CustomDs();
         JPanel mainpanel = ds.getMainPanel();
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
@@ -22,16 +30,18 @@ public class TestClient {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        RioCommProtocol protocol = new RioCommProtocol(7303);
+        protocol = new RioCommProtocol(7303);
         protocol.startCommunication();
+        ds.setRobotMode(ToRIOPacket.ControlMode.TELEOP);
         ds.getEnableButton().addActionListener(e -> {
             protocol.enable(true);
         });
         ds.getDisableButton().addActionListener(e -> {
             protocol.enable(false);
         });
-        ds.setVoltage(12.75);
-
+        Thread thread = new Thread(run);
+        thread.setDaemon(true);
+        thread.start();
         while (true) {
             String text = ds.textOut();
             if (text.equalsIgnoreCase("teleop")) {
