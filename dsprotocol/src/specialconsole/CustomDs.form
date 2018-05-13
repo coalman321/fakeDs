@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="specialconsole.CustomDs">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="1014" height="596"/>
+      <xy x="20" y="20" width="1021" height="596"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -34,18 +34,25 @@
               <enabled value="true"/>
             </properties>
           </component>
-          <component id="4a6c0" class="javax.swing.JTextArea" binding="consoleReadOut">
+          <scrollpane id="12c14">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <minimum-size width="800" height="400"/>
-                <preferred-size width="800" height="400"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="500" height="300"/>
+                <preferred-size width="500" height="300"/>
               </grid>
             </constraints>
-            <properties>
-              <editable value="false"/>
-              <enabled value="true"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="4a6c0" class="javax.swing.JTextArea" binding="consoleReadOut">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                  <enabled value="true"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
       <grid id="6cc2" binding="systemPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

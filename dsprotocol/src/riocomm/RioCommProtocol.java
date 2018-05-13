@@ -50,35 +50,28 @@ public class RioCommProtocol {
         this.setControlMode(false, mode);
     }
 
-    public void setControlMode(boolean isEnabled, ToRIOPacket.ControlMode mode){
-        if(toRIO != null) {
-            System.out.println((robotMode == mode)? (isEnabled? "Enabling": "Disabling"): "Switching to " + mode.toString());
-            robotMode = mode;
-            ToRIOPacket packet = toRIO.getPacket();
-            packet.setControl(false, false, isEnabled, mode);
-            toRIO.setPacket(packet);
-        }
-        else {
-            System.out.println("Cannot set mode");
-        }
+    public void setControlMode(boolean isEnabled, ToRIOPacket.ControlMode mode) throws NullPointerException{
+        ToRIOPacket packet = toRIO.getPacket();
+        packet.setControl(false, false, isEnabled, mode);
+        toRIO.setPacket(packet);
+        System.out.println((robotMode == mode)? (isEnabled? "Enabling": "Disabling"): "Switching to " + mode.toString());
+        robotMode = mode;
     }
 
     public void enable(boolean enable){
         setControlMode(enable, robotMode);
     }
 
-    public void request(boolean shouldRestart, boolean shouldReset){
-        if(toRIO != null) {
-            if(shouldReset) System.out.println("Resetting RIO");
-            if(shouldRestart) System.out.println("Restarting RIO");
-            ToRIOPacket packet = toRIO.getPacket();
-            packet.setRequest(shouldRestart, shouldReset);
-            toRIO.setPacket(packet);
-        }
-        else{
-            System.out.println("Cannot perform request");
-        }
+    public void request(boolean shouldRestart, boolean shouldReset) throws NullPointerException{
+        ToRIOPacket packet = toRIO.getPacket();
+        packet.setRequest(shouldRestart, shouldReset);
+        toRIO.setPacket(packet);
+        if(shouldReset) System.out.println("Resetting RIO");
+        if(shouldRestart) System.out.println("Restarting RIO");
     }
 
+    public ToRIOPacket.ControlMode getRobotMode() {
+        return robotMode;
+    }
 }
 
