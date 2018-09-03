@@ -1,6 +1,7 @@
 import socket
 import time
 import threading
+import struct
 from enum import Enum
 
 class ControlMode(Enum):
@@ -46,14 +47,8 @@ class ToRioPacket:
         request = 0B00000000
         request |= self.wantRestart << 3
         request |= self.wantReset << 2
-        out = bytearray()
-        out.append(self.getCounterMSB() & 0xff)
-        out.append(self.getCounterLSB() & 0xff)
-        out.append(0x01)
-        out.append(control & 0xff)
-        out.append(request & 0xff)
-        out.append(self.allianceStation.value & 0xff)
-        return out
+        return struct.pack('BBBBBB', self.getCounterMSB() & 0xff, self.getCounterLSB() & 0xff, 0x01, control & 0xff,
+                           request & 0xff, self.allianceStation.value & 0xff)
 
     def getCounterMSB(self):
         return self.counter >> 8
@@ -73,6 +68,7 @@ class DSprotocol:
         self.teamnumber = teamnum
         self.ip = self.getAddr()
         self.toRioPacket = ToRioPacket(False, False, False, ControlMode.TELEOP, False, False, AllianceStation.RED1)
+        print(self.toRioPacket.getPacket())
         self.packetThread = threading.Thread(target=self.packetHandler)
         self.packetThread.start()
 
