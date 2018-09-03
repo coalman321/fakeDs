@@ -1,6 +1,6 @@
 import time
 import DSprotocol
-import os
+#import os
 
 driverprotocol = DSprotocol.DSprotocol(7303)
 time.sleep(10)
@@ -9,7 +9,3 @@ driverprotocol.toRioPacket = DSprotocol.ToRioPacket(False, False, True, DSprotoc
 print(driverprotocol.toRioPacket.getPacket())
 print(driverprotocol.toRioPacket.getPacket())
 print(driverprotocol.toRioPacket.getPacket())
-time.sleep(10)
-driverprotocol.close()
-print("closing")
-os._exit(10)

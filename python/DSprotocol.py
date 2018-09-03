@@ -85,7 +85,7 @@ class DSprotocol:
             return socket.gethostbyname("roborio-" + str(self.teamnumber) + "-frc.local")
         except socket.gaierror:
             print("failed to find host by name falling back to fixed IP")
-            return socket.gethostbyname('10.' + str(self.teamnumber)[:2] + '.' + str(self.teamnumber)[2:] + '.2')
+            return socket.gethostbyname('10.' + str(self.teamnumber)[:2] + '.' + str(self.teamnumber)[2:] + '.3')
 
     def packetHandler(self):
         print("attempting connection to RIO")
