@@ -19,7 +19,7 @@ public class RioCommProtocol {
             System.out.println("Could not find Localhost");
         }
         try {
-            toRIO = new DSUDPToRIO(getAddress(teamNum, false));
+            toRIO = new DSUDPToRIO(getAddress(teamNum, true));
             System.out.println("Beginning RIO comms connection");
         }
         catch (UnknownHostException except){
@@ -89,7 +89,7 @@ public class RioCommProtocol {
                 try {
                     String num1 = ("." + teamNum).substring(0, 3) + ".";
                     String num2 = (teamNum + "").substring(2) + ".";
-                    rioAddress = InetAddress.getByName("10" + num1 + num2 + "2");
+                    rioAddress = InetAddress.getByName("10" + num1 + num2 + "3");
                     return rioAddress;
                 } catch (UnknownHostException except1) {
                     System.out.println("System Error: could not find RIO with hostname '" + e.getMessage() + "'");
