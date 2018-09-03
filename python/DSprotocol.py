@@ -93,6 +93,7 @@ class DSprotocol:
             print("connected to RIO begining broadcast")
             while not self.wantStop:
                 output.sendto(self.toRioPacket.getpacket(), (self.ip, 1110))
+                # s = output.recv(100)
                 time.sleep(0.019)
         except Exception as e:
             print(e)
