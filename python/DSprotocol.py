@@ -1,5 +1,6 @@
 import socket
 import time
+import threading
 from enum import Enum
 
 class ControlMode(Enum):
@@ -24,6 +25,7 @@ class ToRioPacket:
     wantRestart = False
     wantReset = False
     allianceStation = AllianceStation.RED1
+    counter = 0
 
     def __init__(self, estop, fms, enabled, mode, restart, reset, station):
         self.isEstop = estop
@@ -35,34 +37,45 @@ class ToRioPacket:
         self.allianceStation = station
 
     def getPacket(self):
+        self.counter += 1
         control = 0B00000000
         control |= self.isEstop << 7
         control |= self.isFms << 3
         control |= self.isEnabled << 2
+        control |= self.controlmode.value & 0xff
         request = 0B00000000
         request |= self.wantRestart << 3
         request |= self.wantReset << 2
         out = bytearray()
-        out.append(0x00)
-        out.append(0x00)
+        out.append(self.getCounterMSB() & 0xff)
+        out.append(self.getCounterLSB() & 0xff)
         out.append(0x01)
-        out.append(control)
-        out.append(request)
+        out.append(control & 0xff)
+        out.append(request & 0xff)
         out.append(self.allianceStation.value & 0xff)
         return out
 
+    def getCounterMSB(self):
+        return self.counter >> 8
+
+    def getCounterLSB(self):
+        return self.counter & 0xff
+
 class DSprotocol:
 
-    teamnumber = 0
+    __teamnumber = 0
     wantStop = False
-    ip = ""
-    toRioPacket = ToRioPacket
+    __ip = ''
+    __toRioPacket = ToRioPacket
+    __packetThread = threading.Thread
 
     def __init__(self, teamnum):
         self.teamnumber = teamnum
         self.ip = self.getAddr()
         self.toRioPacket = ToRioPacket(False, False, False, ControlMode.TELEOP, False, False, AllianceStation.RED1)
-        self.packetHandler()
+        self.packetThread = threading.Thread(target=self.packetHandler)
+        self.packetThread.start()
+
 
     def setPacket(self, newPacket):
         self.toRioPacket = newPacket
@@ -78,15 +91,19 @@ class DSprotocol:
         print("attempting connection to RIO")
         output = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         output.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        print(self.toRioPacket.getPacket())
         try:
             output.bind(("", 1150))
             output.connect((self.ip, 1100))
+            print("connected to RIO begining broadcast")
             while not self.wantStop:
                 output.sendto(self.toRioPacket.getPacket(), ('<broadcast>', 1100))
                 time.sleep(0.018)
         except Exception as e:
             print(e)
 
+    def close(self):
+        self.wantStop = True
 
 
 
