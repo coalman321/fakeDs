@@ -89,16 +89,15 @@ class DSprotocol:
 
     def packetHandler(self):
         print("attempting connection to RIO")
+        print(self.ip)
         output = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         output.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        print(self.toRioPacket.getPacket())
         try:
             output.bind(("", 1150))
-            output.connect((self.ip, 1100))
             print("connected to RIO begining broadcast")
             while not self.wantStop:
-                output.sendto(self.toRioPacket.getPacket(), ('<broadcast>', 1100))
-                time.sleep(0.018)
+                output.sendto(self.toRioPacket.getPacket(), (self.ip, 1110))
+                time.sleep(0.019)
         except Exception as e:
             print(e)
 
