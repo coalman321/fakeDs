@@ -2,8 +2,6 @@ package riocomm;
 
 import specialconsole.CustomDs;
 
-import java.lang.reflect.Field;
-
 public class TestClient {
 
     static RioCommProtocol protocol;

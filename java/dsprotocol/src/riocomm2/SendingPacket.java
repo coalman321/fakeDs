@@ -1,10 +1,11 @@
 package riocomm2;
 
 class SendingPacket{
-    boolean wantReset, wantRestart, wantFMS, wantEstop, wantEnabled;
-    ControlMode mode;
-    AllianceStation station;
-    char counter = 0;
+    private boolean wantReset, wantRestart, wantFMS, wantEstop, wantEnabled;
+    private ControlMode mode;
+    private AllianceStation station;
+    private char counter = 0;
+
     public static final SendingPacket defaultPacket = new SendingPacket(
             false,false,false,false, false,
             ControlMode.TELEOP, AllianceStation.RED1);
@@ -44,28 +45,56 @@ class SendingPacket{
         return wantReset;
     }
 
+    public void setWantReset(boolean wantReset) {
+        this.wantReset = wantReset;
+    }
+
     public boolean isWantRestart() {
         return wantRestart;
+    }
+
+    public void setWantRestart(boolean wantRestart) {
+        this.wantRestart = wantRestart;
     }
 
     public boolean isWantFMS() {
         return wantFMS;
     }
 
+    public void setWantFMS(boolean wantFMS) {
+        this.wantFMS = wantFMS;
+    }
+
     public boolean isWantEstop() {
         return wantEstop;
+    }
+
+    public void setWantEstop(boolean wantEstop) {
+        this.wantEstop = wantEstop;
     }
 
     public boolean isWantEnabled() {
         return wantEnabled;
     }
 
+    public void setWantEnabled(boolean wantEnabled) {
+        this.wantEnabled = wantEnabled;
+    }
+
     public ControlMode getMode() {
         return mode;
     }
 
+    public void setMode(ControlMode mode) {
+        this.mode = mode;
+    }
+
     public AllianceStation getStation() {
         return station;
+    }
+
+    public void setStation(AllianceStation station) {
+        this.station = station;
     }
 
     public enum ControlMode{
