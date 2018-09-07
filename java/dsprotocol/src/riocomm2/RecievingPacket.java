@@ -1,15 +1,15 @@
-package riocomm;
+package riocomm2;
 
-public class FromRIOPacket {
+public class RecievingPacket {
 
     byte[] stored;
     int lastCount = 0, currentCount, dropped;
 
-    public FromRIOPacket(byte[] recived){
+    public RecievingPacket(byte[] recived){
         setData(recived);
     }
 
-    public FromRIOPacket(int len){
+    public RecievingPacket(int len){
         setData(new byte[len]);
     }
 
@@ -42,4 +42,5 @@ public class FromRIOPacket {
     {
         return (b2 & 0xFF) << 8 | (b1 & 0xFF);
     }
+
 }
