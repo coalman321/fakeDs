@@ -7,6 +7,7 @@ public class TestClient {
 
     static RioCommProtocol protocol;
     static CustomDs ds;
+    static boolean errored = false;
 
     public static void main(String[] args){
         ds = new CustomDs();
@@ -14,7 +15,6 @@ public class TestClient {
             protocol = new RioCommProtocol(7303, "10.73.03.3");
             System.out.println("created protocol, starting communications");
             protocol.start();
-            System.out.println("successfully started communications");
             ds.setRobotMode(SendingPacket.ControlMode.TELEOP.toString(), false);
             ds.getEnableButton().addActionListener(e -> enableButton());
             ds.getDisableButton().addActionListener(e -> disableButton());
@@ -47,25 +47,53 @@ public class TestClient {
     }
 
     public static void telemetryLoop(){
+        Exception recieveError;
+        int errorPersist = -1;
+        ds.setCustomReadOut1("Errors", "none");
         while(true) {
             ds.setVoltage(protocol.getRecieving().getVoltage());
             ds.setPacketloss(protocol.getRecieving().getDropped());
+            recieveError = protocol.getExceptions();
+            if(recieveError != null){
+                errorPersist = 0;
+                errored = true;
+                ds.getDisableButton().setEnabled(false);
+                ds.getEnableButton().setEnabled(false);
+                ds.setCustomReadOut1("Errors", recieveError.getMessage());
+                recieveError.printStackTrace();
+                System.out.println("Irrecoverable Error:");
+                System.out.println(recieveError.getLocalizedMessage());
+            }
+            if(errorPersist > 500){
+                ds.setCustomReadOut1("Errors", "none");
+                errorPersist = -1;
+            }
+            else if(errorPersist > -1) {
+                errorPersist++;
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e){
+            }
         }
     }
 
     public static void mainLoop(){
-        while (true) {
+        while (!errored) {
             String text = ds.textOut();
             int assertioncount = -1;
             try {
                 if (text.equalsIgnoreCase("teleop")) {
                     protocol.setMode(SendingPacket.ControlMode.TELEOP);
+                    protocol.wantEnabled(false);
                     ds.setRobotMode(SendingPacket.ControlMode.TELEOP.toString(), false);
                 } else if (text.equalsIgnoreCase("auto")) {
                     protocol.setMode(SendingPacket.ControlMode.AUTO);
+                    protocol.wantEnabled(false);
                     ds.setRobotMode(SendingPacket.ControlMode.AUTO.toString(), false);
                 } else if (text.equalsIgnoreCase("test")) {
                     protocol.setMode(SendingPacket.ControlMode.TEST);
+                    protocol.wantEnabled(false);
                     ds.setRobotMode(SendingPacket.ControlMode.TEST.toString(), false);
                 } else if (text.equalsIgnoreCase("reset")) {
                     protocol.wantReset(true);
@@ -77,12 +105,6 @@ public class TestClient {
                     //System.out.println("closing connection");
                     protocol.close();
                     System.out.println("Closing!");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-
-                    }
-                    System.exit(1);
                 }
                 if(assertioncount > -1){
                     assertioncount++;
@@ -96,6 +118,11 @@ public class TestClient {
                 System.out.println("Could not perform request!");
             }
         }
+        while (!ds.textOut().equalsIgnoreCase("close")) {}
+        //System.out.println("closing connection");
+        protocol.close();
+        System.out.println("Closing!");
+
     }
 
 }

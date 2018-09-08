@@ -1,9 +1,6 @@
 package riocomm2;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class RioCommProtocol {
 
@@ -19,6 +16,10 @@ public class RioCommProtocol {
         ioHandler.start(mRioAddress);
         if(ioHandler.getLastException() != null)
             throw ioHandler.getLastException();
+    }
+
+    public Exception getExceptions(){
+        return ioHandler.getLastException();
     }
 
     public void close(){
@@ -98,26 +99,30 @@ public class RioCommProtocol {
         private byte[] recieve;
 
         private final Runnable run = () -> {
-            try{
-                sock = new DatagramSocket(recievingPort);
-                byte[] toSend;
-                while (!wantStop) {
-                    //sending
-                    toSend = sending.getPacket();
-                    DatagramPacket toRio = new DatagramPacket(toSend, toSend.length, mToRio, sendingPort);
-                    sock.send(toRio);
+            while(!isValidError() && !wantStop) {
+                try {
+                    sock = new DatagramSocket(recievingPort);
+                    sock.setSoTimeout(10);
+                    byte[] toSend;
+                    while (!wantStop) {
+                        //sending
+                        toSend = sending.getPacket();
+                        DatagramPacket toRio = new DatagramPacket(toSend, toSend.length, mToRio, sendingPort);
+                        sock.send(toRio);
 
-                    //wait for response
-                    Thread.sleep(18);
+                        //wait for response
+                        Thread.sleep(18);
 
-                    //receive into system
-                    DatagramPacket fromRio = new DatagramPacket(toSend, toSend.length);
-                    sock.receive(fromRio);
-                    recieving.setData(fromRio.getData());
+                        //receive into system
+                        DatagramPacket fromRio = new DatagramPacket(recieve, recieve.length);
+                        sock.receive(fromRio);
+                        recieving.setData(fromRio.getData());
+
+
+                    }
+                } catch (Exception e) {
+                    mLastException = e;
                 }
-            } catch (Exception e){
-                mLastException = e;
-                wantStop = true;
             }
         };
 
@@ -125,7 +130,7 @@ public class RioCommProtocol {
         public void start(InetAddress address){
             mToRio = address;
             recieve = new byte[64];
-            recieving = new RecievingPacket(recieve);
+            recieving = new RecievingPacket(64);
             runner = new Thread(run);
             runner.start();
         }
@@ -148,12 +153,24 @@ public class RioCommProtocol {
         }
 
         public Exception getLastException() {
-            return mLastException;
+            if(isValidError()) {
+                Exception prep = mLastException;
+                mLastException = null;
+                return prep;
+            }
+            return null;
         }
 
         public boolean getStopped(){
             return wantStop;
         }
+
+        private boolean isValidError(){
+            return mLastException != null &&
+                    !((mLastException instanceof InterruptedException) ||
+                    (mLastException instanceof SocketTimeoutException));
+        }
+
     }
 
 }
