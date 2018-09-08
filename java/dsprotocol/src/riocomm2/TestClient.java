@@ -8,6 +8,7 @@ public class TestClient {
     static RioCommProtocol protocol;
     static CustomDs ds;
     static boolean errored = false;
+    static int assertioncount = -1;
 
     public static void main(String[] args){
         ds = new CustomDs();
@@ -51,8 +52,21 @@ public class TestClient {
         int errorPersist = -1;
         ds.setCustomReadOut1("Errors", "none");
         while(true) {
+            //do data updates
             ds.setVoltage(protocol.getRecieving().getVoltage());
             ds.setPacketloss(protocol.getRecieving().getDropped());
+
+            //handle assertions
+            if(assertioncount > 9){
+                protocol.wantReset(false);
+                protocol.wantRestart(false);
+                assertioncount = -1;
+            }
+            else if(assertioncount > -1){
+                assertioncount++;
+            }
+
+            //check errors
             recieveError = protocol.getExceptions();
             if(recieveError != null){
                 errorPersist = 0;
@@ -81,7 +95,6 @@ public class TestClient {
     public static void mainLoop(){
         while (!errored) {
             String text = ds.textOut();
-            int assertioncount = -1;
             try {
                 if (text.equalsIgnoreCase("teleop")) {
                     protocol.setMode(SendingPacket.ControlMode.TELEOP);
@@ -106,18 +119,12 @@ public class TestClient {
                     protocol.close();
                     System.out.println("Closing!");
                 }
-                if(assertioncount > -1){
-                    assertioncount++;
-                }
-                else if(assertioncount > 9){
-                    protocol.wantReset(false);
-                    protocol.wantRestart(false);
-                    assertioncount = -1;
-                }
+
             }catch (NullPointerException except){
                 System.out.println("Could not perform request!");
             }
         }
+        System.out.println("errored");
         while (!ds.textOut().equalsIgnoreCase("close")) {}
         //System.out.println("closing connection");
         protocol.close();

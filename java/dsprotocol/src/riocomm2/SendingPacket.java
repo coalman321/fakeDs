@@ -30,12 +30,12 @@ class SendingPacket{
         counter++;
 
         byte control = (byte)(wantEstop ? 0b10000000 : 0b0000000);
-        control |= (wantFMS ? 0b00001000 : 0b00000000);
-        control |= (wantEnabled ? 0b00000100 : 0b00000000);
-        control |= mode.id;
+                  control |= (wantFMS ? 0b00001000 : 0b00000000);
+                  control |= (wantEnabled ? 0b00000100 : 0b00000000);
+                   control |= mode.id;
 
         byte request = (byte)(wantRestart ? 0b00001000 : 0b00000000);
-        request |= (wantReset ? 0b00000100 : 0b00000000);
+                  request |= (wantReset ? 0b00000100 : 0b00000000);
 
         return new byte[] {(byte) (counter >> 8), (byte) (counter & 0xff),
                 0x01, control, request, station.id};

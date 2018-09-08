@@ -122,6 +122,7 @@ public class RioCommProtocol {
                     }
                 } catch (Exception e) {
                     mLastException = e;
+                    sock.close();
                 }
             }
         };
