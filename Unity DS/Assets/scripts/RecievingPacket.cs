@@ -1,4 +1,6 @@
 
+using System.Globalization;
+
 namespace comm {
 	public class RecievingPacket {
 		byte[] stored;
@@ -33,7 +35,7 @@ namespace comm {
 		}
 
 		public override string ToString() {
-			return "packet count: " + getCount() + "    Voltage: " + getVoltage() + "	Dropped: " + getDropped();
+			return "packet count: " + getCount() + "    Voltage: " + getVoltage().ToString("F2", CultureInfo.InvariantCulture) + "	Dropped: " + getDropped();
 		}
 	
 		public static int bytesToInt2 (byte b1, byte b2)      // unsigned

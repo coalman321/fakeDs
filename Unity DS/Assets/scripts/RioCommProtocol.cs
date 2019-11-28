@@ -8,7 +8,9 @@ namespace comm {
 	public class RioCommProtocol {
 
 		public static void startComm(int teamNum, String fallback) {
+			Console.WriteLine("starting comm protocol");
 			IPAddress resolved = resolveRio(teamNum, fallback);
+			Console.WriteLine("starting IOhandler thread");
 			if(resolved != null) IOHandler.start(resolved);
 		}
 
@@ -92,29 +94,44 @@ namespace comm {
 			private static UdpClient udpClient;
 			private static IPAddress rioAddress;
 			private static IPEndPoint RioWithPort;
+			private static IPEndPoint recieveFromRio;
 			private static bool wantStop = false;
 
 			private static void handleComm() {
 
 				while (!wantStop) {
-					try {
-						udpClient.Connect(RioWithPort);
+					try{
+						udpClient = new UdpClient(recievingPort);
+						//udpClient.Client.Blocking = false;
 						byte[] toSend;
-						while (!wantStop) {
+						while (!wantStop)
+						{
 							//sending
 							toSend = sending.getPacket();
-							udpClient.Send(toSend, toSend.Length);
+							//Console.WriteLine("sending");
+							udpClient.Send(toSend, toSend.Length, RioWithPort);
 
 							//wait for response
 							Thread.Sleep(18);
 
 							//receive into system
-							recieve = udpClient.Receive(ref RioWithPort);
-							recieving.setData(recieve);
+							//Console.WriteLine("recieving");
+							if (udpClient.Available > 0)
+							{
+								recieve = udpClient.Receive(ref recieveFromRio);
+								//Console.WriteLine("recieved");
+								recieving.setData(recieve);
+							}
+							
 						}
 					}
-					catch (Exception e) {
+					catch (Exception e)
+					{
 						Console.Out.WriteLine("Encountered an exception while operating com protocol: " + e);
+					}
+					finally
+					{
+						udpClient?.Close();
 					}
 				}
 
@@ -123,14 +140,14 @@ namespace comm {
 			public static void start(IPAddress address) {
 				rioAddress = address;
 				RioWithPort = new IPEndPoint(rioAddress, sendingPort);
-				udpClient = new UdpClient(recievingPort);
+				recieveFromRio = new IPEndPoint(rioAddress, sendingPort);
 				Thread commThread = new Thread(handleComm);
 				commThread.Start();
 			}
 
 			public static void close() {
 				wantStop = true;
-				udpClient?.Close();
+				Console.WriteLine("aborting Rio comm");
 			}
 
 			public static void setSendingPacket(SendingPacket packet) {
