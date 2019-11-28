@@ -32,7 +32,7 @@ namespace comm {
 			return bytesToInt2(stored[6], stored[5]) / 256.0;
 		}
 
-		public string toString() {
+		public override string ToString() {
 			return "packet count: " + getCount() + "    Voltage: " + getVoltage() + "	Dropped: " + getDropped();
 		}
 	

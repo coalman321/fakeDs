@@ -4,7 +4,7 @@ using comm;
 using UnityEngine;
 
 
-public class controller : MonoBehaviour {
+public class Controller : MonoBehaviour {
 
     private RecievingPacket lastRecievingPacket;
     private SendingPacket lastSendingPacket;
@@ -12,21 +12,31 @@ public class controller : MonoBehaviour {
     // Start is called before the first frame update
     void Start()
     {
+        ConsoleRedirect.Redirect();
         RioCommProtocol.startComm(4145, "10.41.45.2");
         lastSendingPacket = RioCommProtocol.getSending();
+        lastRecievingPacket = RioCommProtocol.getRecieving();
     }
 
     // Update is called once per frame
     void Update() {
-        lastRecievingPacket = RioCommProtocol.getRecieving();
         RioCommProtocol.setSending(lastSendingPacket);
+        lastRecievingPacket = RioCommProtocol.getRecieving();
     }
 
     void OnApplicationQuit() {
         RioCommProtocol.close();
     }
 
-    void setRobotMode(SendingPacket.ControlMode mode) {
-        lastSendingPacket.setMode(mode);
+    public void setRobotMode(int mode) {
+        lastSendingPacket.setMode((SendingPacket.ControlMode)mode);
+    }
+
+    public void setEnabled(bool enable) {
+        lastSendingPacket.setWantEnabled(enable);
+    }
+
+    public string getRobotData() {
+        return lastRecievingPacket.ToString();
     }
 }

@@ -9,7 +9,7 @@ namespace comm {
 
 		public static void startComm(int teamNum, String fallback) {
 			IPAddress resolved = resolveRio(teamNum, fallback);
-			IOHandler.start(resolved);
+			if(resolved != null) IOHandler.start(resolved);
 		}
 
 		public static void close() {
@@ -58,28 +58,37 @@ namespace comm {
 
 		private static IPAddress resolveRio(int teamNum, String fallback) {
 			IPAddress[] resolved;
-
-			resolved = Dns.GetHostAddresses("roborio-" + teamNum + "-frc.local");
-			if (resolved.Length > 0) {
-				Console.Out.WriteLine("Rio found at " + resolved[0]);
-				return resolved[0];
+			try {
+				resolved = Dns.GetHostAddresses("roborio-" + teamNum + "-frc.local");
+				if (resolved.Length > 0) {
+					Console.WriteLine("Rio found at " + resolved[0]);
+					return resolved[0];
+				}
+			}
+			catch (SocketException ex) {
+				Console.WriteLine("RIO not found with DNS");
 			}
 
-			resolved = Dns.GetHostAddresses(fallback);
-			if (resolved.Length > 0) {
-				Console.Out.WriteLine("Rio found at " + resolved[0]);
-				return resolved[0];
+			try {
+				resolved = Dns.GetHostAddresses(fallback);
+				if (resolved.Length > 0) {
+					Console.WriteLine("Rio found at " + resolved[0]);
+					return resolved[0];
+				}
+			}
+			catch (SocketException ex) {
+				Console.WriteLine("RIO not found with fallback IP");
 			}
 
-			throw new SocketException();
+			throw new Exception("Could not Resolve with DNS or fallback", new SocketException());
 		}
 
 		private class IOHandler {
 			private const int sendingPort = 1110;
 			private const int recievingPort = 1150;
 			private static SendingPacket sending = new SendingPacket();
-			private static RecievingPacket recieving;
-			private static byte[] recieve;
+			private static RecievingPacket recieving = new RecievingPacket(64);
+			private static byte[] recieve = new byte[64];
 			private static UdpClient udpClient;
 			private static IPAddress rioAddress;
 			private static IPEndPoint RioWithPort;
@@ -89,6 +98,7 @@ namespace comm {
 
 				while (!wantStop) {
 					try {
+						udpClient.Connect(RioWithPort);
 						byte[] toSend;
 						while (!wantStop) {
 							//sending
@@ -112,9 +122,8 @@ namespace comm {
 
 			public static void start(IPAddress address) {
 				rioAddress = address;
-				recieve = new byte[64];
-				recieving = new RecievingPacket(64);
 				RioWithPort = new IPEndPoint(rioAddress, sendingPort);
+				udpClient = new UdpClient(recievingPort);
 				Thread commThread = new Thread(handleComm);
 				commThread.Start();
 			}
