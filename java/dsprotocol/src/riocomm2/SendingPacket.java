@@ -1,18 +1,21 @@
 package riocomm2;
 
+import java.util.List;
+
 class SendingPacket{
     private boolean wantReset, wantRestart, wantFMS, wantEstop, wantEnabled;
     private ControlMode mode;
     private AllianceStation station;
     private char counter = 0;
+    private List<Tag> tags;
 
     public static final SendingPacket defaultPacket = new SendingPacket(
             false,false,false,false, false,
             ControlMode.TELEOP, AllianceStation.RED1);
 
     public SendingPacket(boolean reset, boolean restart, boolean fms,
-                  boolean estop, boolean enabled, ControlMode mode,
-                  AllianceStation station){
+                         boolean estop, boolean enabled, ControlMode mode,
+                         AllianceStation station){
         wantReset = reset; wantRestart = restart; wantFMS = fms;
         wantEstop = estop; wantEnabled = enabled; this.mode = mode;
         this.station = station;
@@ -37,8 +40,7 @@ class SendingPacket{
         byte request = (byte)(wantRestart ? 0b00001000 : 0b00000000);
                   request |= (wantReset ? 0b00000100 : 0b00000000);
 
-        return new byte[] {(byte) (counter >> 8), (byte) (counter & 0xff),
-                0x01, control, request, station.id};
+        return new byte[] {(byte) (counter >> 8), (byte) (counter & 0xff), 0x01, control, request, station.id};
     }
 
     public boolean isWantReset(){
@@ -135,6 +137,36 @@ class SendingPacket{
         @Override
         public String toString() {
             return name;
+        }
+    }
+
+    public class Tag{
+
+        private byte size;
+        private ID id;
+        byte[] payload;
+
+        public Tag(ID id, byte[] payload){
+
+        }
+
+    }
+
+    public enum ID {
+
+        COUNTDOWN(0x07),
+        JOYSTICK(0x0c),
+        DATE(0x0f),
+        TIMEZONE(0x01);
+
+        private byte internal;
+
+        ID(int id){
+            internal = (byte) id;
+        }
+
+        public byte getInternal() {
+            return internal;
         }
     }
 }
