@@ -1,5 +1,7 @@
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -96,6 +98,7 @@ namespace comm {
 			private static IPEndPoint RioWithPort;
 			private static IPEndPoint recieveFromRio;
 			private static bool wantStop = false;
+			//private static List<SendingPacket.Tag> TCPEvents;
 
 			private static void handleComm() {
 

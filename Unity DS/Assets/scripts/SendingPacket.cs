@@ -17,11 +17,13 @@ namespace comm {
 			wantReset = reset; wantRestart = restart; wantFMS = fms;
 			wantEstop = estop; wantEnabled = enabled; this.mode = mode;
 			this.station = station;
+			tags = new List<Tag>();
 		}
 		public SendingPacket(){
 			wantReset = false; wantRestart = false; wantFMS = false;
 			wantEstop = false; wantEnabled = false; mode = ControlMode.TELEOP;
 			station = AllianceStation.RED1;
+			tags = new List<Tag>();
 		}
 		
 		public void setPacket(bool reset, bool restart, bool fms,
@@ -32,17 +34,39 @@ namespace comm {
 		}
 		
 		public byte[] getPacket() {
+			List<byte> packet = new List<byte>();
+			
 			counter++;
+			packet.Add((byte) (counter >> 8));
+			packet.Add((byte) (counter & 0xff));
+			
+			packet.Add(0x01);
 	
 			byte control = (byte)(wantEstop ? 0x80 : 0x00);
 			control |= (byte)(wantFMS ? 0x08 : 0x00);
 			control |= (byte)(wantEnabled ? 0x04 : 0x00);
 			control |= (byte)mode;
+			packet.Add(control);
 	
 			byte request = (byte)(wantRestart ? 0x08 : 0x00);
 			request |= (byte)(wantReset ? 0x04 : 0x00);
-	
-			return new byte[] {(byte) (counter >> 8), (byte) (counter & 0xff), 0x01, control, request, (byte)station};
+			packet.Add(request);
+			
+			packet.Add((byte)station);
+
+			foreach (var tag in tags) {
+				packet.AddRange(tag.getPayload());
+			}
+
+			return packet.ToArray();
+		}
+
+		/// <summary>
+		/// adds a tag to the UDP stream
+		/// </summary>
+		/// <param name="tag"> if the tag needs to be modified then it should be passed via ref</param>
+		public void addJoystick(ref Joystick tag) {
+			tags.Add(tag);
 		}
 		
 		public bool isWantReset(){
@@ -117,18 +141,15 @@ namespace comm {
 		}
 	
 	
-		public class Tag{
-			private byte size;
-			private ID id;
-			byte[] payload;
-			
-			public Tag(ID id, byte[] payload){
-			
-			}
-		
+		public abstract class Tag{
+			protected byte size;
+			protected TagID id;
+			protected List<byte> payload;
+
+			public abstract byte[] getPayload();
 		}
 	
-		public enum ID: byte {
+		public enum TagID: byte {
 			COUNTDOWN = 0x07,
 			JOYSTICK = 0x0c,
 			DATE = 0x0f,
